@@ -71,7 +71,7 @@
 	<!-- This is the container that holds GraphViewr -->
 	<div
 		id="Nodes"
-		class="absolute h-full w-full cursor-move "
+		class="absolute h-full w-full cursor-move overflow-hidden"
 		on:contextmenu|preventDefault
 		on:click|self={clearActiveUser}
 		on:keyup|self={clearActiveUser}
