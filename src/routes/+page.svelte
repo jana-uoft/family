@@ -49,6 +49,13 @@
 
 	const clearActiveUser = () => {
 		$activeUser = {}
+		$users = $users.map((u) => {
+			delete u['related-partner']
+			delete u['related-parent']
+			delete u['related-child']
+			delete u['related-sibling']
+			return u
+		})
 	}
 </script>
 
@@ -60,7 +67,7 @@
 	<!-- This is the container that holds GraphViewr -->
 	<div
 		id="Nodes"
-		class="absolute h-full w-full cursor-move"
+		class="absolute h-full w-full cursor-move "
 		on:contextmenu|preventDefault
 		on:click|self={clearActiveUser}
 		on:keyup|self={clearActiveUser}
@@ -68,7 +75,7 @@
 	>
 		<!-- This container is transformed by d3zoom -->
 		<div id="Node">
-			{#each $users as user}
+			{#each $users as user (user.id)}
 				<User {user} />
 			{/each}
 		</div>

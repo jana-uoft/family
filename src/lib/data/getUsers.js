@@ -92,4 +92,7 @@ export default async function getUsers() {
 			avatar: 'https://randomuser.me/api/portraits/men/7.jpg'
 		}
 	]
+		.map((value) => ({ value, sort: Math.random() }))
+		.sort((a, b) => a.sort - b.sort)
+		.map(({ value }) => value)
 }
