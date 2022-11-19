@@ -7,6 +7,7 @@
 
 	import User from '$lib/components/User.svelte'
 	import Loading from '$lib/components/Loading.svelte'
+	import Legend from '$lib/components/Legend.svelte'
 
 	let isLoading = true
 	let zoom
@@ -66,6 +67,7 @@
 {#if isLoading}
 	<Loading />
 {:else}
+	<Legend />
 	<!-- This is the container that holds GraphViewr -->
 	<div
 		id="Nodes"
