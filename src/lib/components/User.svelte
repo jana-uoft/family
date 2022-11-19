@@ -1,6 +1,7 @@
 <script>
 	export let user
 
+	import RelationIndicator from '$lib/components/RelationIndicator.svelte'
 	import ActiveIndicator from '$lib/components/ActiveIndicator.svelte'
 
 	import { USER_CARD_SIZE } from '$lib/utils/constants'
@@ -13,31 +14,40 @@
 		height: ${USER_CARD_SIZE.height}px;
 	`
 
-	const onUserClick = () => {
+	const onUserClick = async () => {
 		if ($activeUser?.id !== user.id) {
 			$activeUser = user
+
 			// clear all related users
 			$users = $users.map((u) => {
 				delete u['related-partner']
-				delete u['related-parent']
+				delete u['related-father']
+				delete u['related-mother']
 				delete u['related-child']
-				delete u['related-sibling']
+				delete u['related-brother']
+				delete u['related-sister']
 				return u
 			})
 			// identify the immediate relations of the active user
-			// and set property 'related-xx' to true: related-partner, related-parent, related-child, related-sibling
-			// this will be used to show the related users
+			// and set property 'related-xx' to true
+			// this will be used to show the RelationIndicator
 			$users = $users.map((u) => {
-				if (u.children.includes(user.id)) {
-					u['related-parent'] = true
-				}
-				if (u.parents.includes(user.id)) {
+				if (user.children.includes(u.id)) {
 					u['related-child'] = true
 				}
-				if (u.siblings.includes(user.id)) {
-					u['related-sibling'] = true
+				if (user.father === u.id) {
+					u['related-father'] = true
 				}
-				if (u.partner === user.id) {
+				if (user.mother === u.id) {
+					u['related-mother'] = true
+				}
+				if (user.brothers.includes(u.id)) {
+					u['related-brother'] = true
+				}
+				if (user.sisters.includes(u.id)) {
+					u['related-sister'] = true
+				}
+				if (user.partner === u.id) {
 					u['related-partner'] = true
 				}
 				return u
@@ -47,36 +57,45 @@
 
 	$: isRelated =
 		user['related-partner'] ||
-		user['related-parent'] ||
+		user['related-father'] ||
+		user['related-mother'] ||
 		user['related-child'] ||
-		user['related-sibling']
-
-	$: color = user['related-parent']
-		? 'red'
-		: user['related-child']
-		? 'green'
-		: user['related-sibling']
-		? 'blue'
-		: user['related-partner']
-		? 'yellow'
-		: 'white'
+		user['related-brother'] ||
+		user['related-sister']
 </script>
 
 <button
 	on:click={onUserClick}
-	class="absolute flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-black shadow-lg transition hover:scale-105 hover:bg-gray-50 focus:scale-110 focus:outline-none focus:ring-2 focus:ring-indigo-500 ring-offset-1 "
+	class="absolute flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-black shadow-lg transition hover:scale-105 hover:bg-gray-50 ring-offset-1"
 	class:opacity-30={$activeUser?.id && $activeUser?.id !== user.id}
-	class:scale-90={$activeUser?.id && $activeUser?.id !== user.id}
+	class:scale-75={$activeUser?.id && $activeUser?.id !== user.id}
+	class:scale-105={$activeUser?.id === user.id}
+	class:scale-80={isRelated}
 	class:opacity-100={isRelated}
-	class:ring-2={isRelated}
-	class:ring-red-500={user['related-parent']}
-	class:ring-green-500={user['related-child']}
-	class:ring-blue-500={user['related-sibling']}
-	class:ring-yellow-500={user['related-partner']}
+	class:ring-2={isRelated || $activeUser?.id === user.id}
+	class:ring-yellow-400={isRelated || $activeUser?.id === user.id}
 	{style}
 >
-	{#if isRelated}
-		<ActiveIndicator {color} />
+	{#if $activeUser?.id === user.id}
+		<ActiveIndicator />
+	{/if}
+	{#if user['related-father']}
+		<RelationIndicator relation="father" />
+	{/if}
+	{#if user['related-mother']}
+		<RelationIndicator relation="mother" />
+	{/if}
+	{#if user['related-child']}
+		<RelationIndicator relation="child" />
+	{/if}
+	{#if user['related-brother']}
+		<RelationIndicator relation="brother" />
+	{/if}
+	{#if user['related-sister']}
+		<RelationIndicator relation="sister" />
+	{/if}
+	{#if user['related-partner']}
+		<RelationIndicator relation="partner" />
 	{/if}
 
 	<div class="relative h-full overflow-hidden rounded-lg">

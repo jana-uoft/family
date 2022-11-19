@@ -51,9 +51,11 @@
 		$activeUser = {}
 		$users = $users.map((u) => {
 			delete u['related-partner']
-			delete u['related-parent']
+			delete u['related-father']
+			delete u['related-mother']
 			delete u['related-child']
-			delete u['related-sibling']
+			delete u['related-brother']
+			delete u['related-sister']
 			return u
 		})
 	}

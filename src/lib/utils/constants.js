@@ -4,18 +4,23 @@ export const USER_CARD_SIZE = {
 }
 
 export const positionUsers = (users) => {
-	// position all users in a grid relative to the USER_CARD_SIZE and viewport
+	let previousUser = null
 	const positionedUsers = users.map((user, i) => {
-		// get the optimal number of columns
-		const columns = Math.floor(window.innerWidth / USER_CARD_SIZE.width)
-		// maintain a gap of 1rem between each user
-		const gap = 16
-		// keep a padding of 1rem in all directions
-		const padding = 16
-		// calculate the x and y position of the user
-		const x = (i % columns) * (USER_CARD_SIZE.width + gap) + padding
-		const y = Math.floor(i / columns) * (USER_CARD_SIZE.height + gap) + padding
-		return { ...user, x, y }
+		// spread out the users filling the entire viewport width and height
+		// keep adding the next user in a circle around the previous user
+		// the first user is positioned at the center of the viewport
+		if (previousUser) {
+			const angle = (i * 2 * Math.PI) / users.length
+			const x = previousUser.x + Math.cos(angle) * USER_CARD_SIZE.width * 2
+			const y = previousUser.y + Math.sin(angle) * USER_CARD_SIZE.height * 2
+			return { ...user, x, y }
+		} else {
+			// center the first user in the viewport
+			const x = window.innerWidth / 2 - USER_CARD_SIZE.width / 2
+			const y = window.innerHeight / 2 - USER_CARD_SIZE.height / 2
+			previousUser = { ...user, x, y }
+			return previousUser
+		}
 	})
 	return positionedUsers
 }
