@@ -4,22 +4,20 @@ export const USER_CARD_SIZE = {
 }
 
 export const positionUsers = (users) => {
-	let previousUser = null
 	const positionedUsers = users.map((user, i) => {
-		// spread out the users filling the entire viewport width and height
-		// keep adding the next user in a circle around the previous user
-		// the first user is positioned at the center of the viewport
-		if (previousUser) {
-			const angle = (i * 2 * Math.PI) / users.length
-			const x = previousUser.x + Math.cos(angle) * USER_CARD_SIZE.width * 2
-			const y = previousUser.y + Math.sin(angle) * USER_CARD_SIZE.height * 2
-			return { ...user, x, y }
-		} else {
-			// center the first user in the viewport
-			const x = window.innerWidth / 2 - USER_CARD_SIZE.width / 2
-			const y = window.innerHeight / 2 - USER_CARD_SIZE.height / 2
-			previousUser = { ...user, x, y }
-			return previousUser
+		// position the users maximizing the spread of the visible viewport without overlapping
+		// start from the center of the viewport
+		// fill the viewport with the users allowing to overflow the viewport
+		// the overflow will be hidden by the viewport
+		// calculate the optimal number of columns based on viewport width
+		// maintain a gap of 16px between the users
+		const columns = Math.max(Math.floor(window.innerWidth / USER_CARD_SIZE.width), users.length / 6)
+		const x = (i % columns) * USER_CARD_SIZE.width + 16 * (i % columns)
+		const y = Math.floor(i / columns) * USER_CARD_SIZE.height + 16 * Math.floor(i / columns)
+		return {
+			...user,
+			x,
+			y
 		}
 	})
 	return positionedUsers
