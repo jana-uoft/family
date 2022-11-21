@@ -32,7 +32,7 @@
 			// and set property 'related-xx' to true
 			// this will be used to show the RelationIndicator
 			$users = $users.map((u) => {
-				if (user.children.includes(u.id)) {
+				if (user.children?.includes(u.id)) {
 					u['related-child'] = true
 				}
 				if (user.father === u.id) {
@@ -41,10 +41,10 @@
 				if (user.mother === u.id) {
 					u['related-mother'] = true
 				}
-				if (user.brothers.includes(u.id)) {
+				if (user.brothers?.includes(u.id)) {
 					u['related-brother'] = true
 				}
-				if (user.sisters.includes(u.id)) {
+				if (user.sisters?.includes(u.id)) {
 					u['related-sister'] = true
 				}
 				if (user.partner === u.id) {
@@ -54,6 +54,8 @@
 			})
 		}
 	}
+
+	$: isActive = $activeUser?.id === user.id
 
 	$: isRelated =
 		user['related-partner'] ||
@@ -66,17 +68,19 @@
 
 <button
 	on:click={onUserClick}
-	class="absolute flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-black shadow-lg transition hover:scale-105 hover:bg-gray-50 ring-offset-1"
+	class="absolute flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-black shadow-lg transition  hover:bg-gray-50 ring-offset-1"
 	class:opacity-30={$activeUser?.id && $activeUser?.id !== user.id}
 	class:scale-75={$activeUser?.id && $activeUser?.id !== user.id}
-	class:scale-105={$activeUser?.id === user.id}
+	class:scale-105={isActive}
 	class:scale-80={isRelated}
 	class:opacity-100={isRelated}
-	class:ring-2={isRelated || $activeUser?.id === user.id}
-	class:ring-yellow-400={isRelated || $activeUser?.id === user.id}
+	class:ring-2={isRelated || isActive}
+	class:ring-yellow-400={isRelated || isActive}
+	class:hover:scale-90={!isActive}
+	class:hover:opacity-80={!isActive}
 	{style}
 >
-	{#if $activeUser?.id === user.id}
+	{#if isActive}
 		<ActiveIndicator />
 	{/if}
 	{#if user['related-father']}

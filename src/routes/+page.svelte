@@ -67,7 +67,6 @@
 {#if isLoading}
 	<Loading />
 {:else}
-	<Legend />
 	<!-- This is the container that holds GraphViewr -->
 	<div
 		id="Nodes"
@@ -83,5 +82,8 @@
 				<User {user} />
 			{/each}
 		</div>
+	</div>
+	<div class="backdrop-blur-md w-full z-20 h-12 p-1 absolute bottom-0">
+		<Legend />
 	</div>
 {/if}
